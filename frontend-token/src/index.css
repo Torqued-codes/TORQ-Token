@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0f0c29, #1e1b4b, #4c1d95);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Applies real device safe-area insets (notches, home-indicator, punch-holes)
+   sitewide. Use these utility classes anywhere content could butt up against
+   a screen edge - headers, bottom nav, fixed footers, modals. */
+.safe-top {
+  padding-top: max(env(safe-area-inset-top), 0.75rem);
+}
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+}
+.safe-left {
+  padding-left: max(env(safe-area-inset-left), 1rem);
+}
+.safe-right {
+  padding-right: max(env(safe-area-inset-right), 1rem);
+}
+.safe-x {
+  padding-left: max(env(safe-area-inset-left), 1rem);
+  padding-right: max(env(safe-area-inset-right), 1rem);
+}
+
+/* Prevents long wallet addresses / tx hashes from overflowing on narrow screens */
+.truncate-hash {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.4);
+  border-radius: 999px;
+}
