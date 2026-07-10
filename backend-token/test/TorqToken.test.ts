@@ -1,54 +1,58 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("DependencyLedger", function () {
+describe("TorqToken", function () {
   async function deployFixture() {
-    const [owner, other] = await ethers.getSigners();
-    const Ledger = await ethers.getContractFactory("DependencyLedger");
-    const ledger = await Ledger.deploy(owner.address);
-    await ledger.waitForDeployment();
-    return { ledger, owner, other };
+    const [owner, alice, bob] = await ethers.getSigners();
+    const Torq = await ethers.getContractFactory("TorqToken");
+    const torq = await Torq.deploy(owner.address);
+    await torq.waitForDeployment();
+    return { torq, owner, alice, bob };
   }
 
-  const fakeHash = ethers.keccak256(ethers.toUtf8Bytes("test-package-contents"));
+  it("mints a reward within bounds on mine()", async function () {
+    const { torq, alice } = await deployFixture();
+    const before = await torq.balanceOf(alice.address);
+    await torq.connect(alice).mine();
+    const after = await torq.balanceOf(alice.address);
+    const reward = after - before;
 
-  it("allows the owner to register a package", async function () {
-    const { ledger } = await deployFixture();
-    await expect(ledger.registerPackage("left-pad", "1.3.0", fakeHash))
-      .to.emit(ledger, "PackageRegistered");
-
-    const [hash] = await ledger.getPackageHash("left-pad", "1.3.0");
-    expect(hash).to.equal(fakeHash);
+    expect(reward).to.be.gte(ethers.parseUnits("1", 18));
+    expect(reward).to.be.lte(ethers.parseUnits("100", 18));
   });
 
-  it("rejects registration from non-owner accounts", async function () {
-    const { ledger, other } = await deployFixture();
+  it("enforces the mining cooldown", async function () {
+    const { torq, alice } = await deployFixture();
+    await torq.connect(alice).mine();
+    await expect(torq.connect(alice).mine()).to.be.revertedWithCustomError(
+      torq,
+      "MiningOnCooldown"
+    );
+  });
+
+  it("allows mining again after cooldown elapses", async function () {
+    const { torq, alice } = await deployFixture();
+    await torq.connect(alice).mine();
+    await ethers.provider.send("evm_increaseTime", [11]);
+    await ethers.provider.send("evm_mine", []);
+    await expect(torq.connect(alice).mine()).to.not.be.reverted;
+  });
+
+  it("transfers atomically between wallets", async function () {
+    const { torq, alice, bob } = await deployFixture();
+    await torq.connect(alice).mine();
+    const aliceBalance = await torq.balanceOf(alice.address);
+
+    await torq.connect(alice).transfer(bob.address, aliceBalance / 2n);
+
+    expect(await torq.balanceOf(bob.address)).to.equal(aliceBalance / 2n);
+    expect(await torq.balanceOf(alice.address)).to.equal(aliceBalance - aliceBalance / 2n);
+  });
+
+  it("reverts a transfer that exceeds balance", async function () {
+    const { torq, alice, bob } = await deployFixture();
     await expect(
-      ledger.connect(other).registerPackage("left-pad", "1.3.0", fakeHash)
-    ).to.be.revertedWithCustomError(ledger, "OwnableUnauthorizedAccount");
-  });
-
-  it("reverts when querying an unregistered package", async function () {
-    const { ledger } = await deployFixture();
-    await expect(ledger.getPackageHash("ghost-pkg", "0.0.1")).to.be.revertedWithCustomError(
-      ledger,
-      "PackageNotFound"
-    );
-  });
-
-  it("prevents duplicate registration and supports explicit updates", async function () {
-    const { ledger } = await deployFixture();
-    await ledger.registerPackage("chalk", "5.3.0", fakeHash);
-
-    await expect(ledger.registerPackage("chalk", "5.3.0", fakeHash)).to.be.revertedWithCustomError(
-      ledger,
-      "PackageAlreadyExists"
-    );
-
-    const newHash = ethers.keccak256(ethers.toUtf8Bytes("patched-contents"));
-    await expect(ledger.updatePackage("chalk", "5.3.0", newHash)).to.emit(ledger, "PackageUpdated");
-
-    const [hash] = await ledger.getPackageHash("chalk", "5.3.0");
-    expect(hash).to.equal(newHash);
+      torq.connect(alice).transfer(bob.address, ethers.parseUnits("1", 18))
+    ).to.be.reverted;
   });
 });
