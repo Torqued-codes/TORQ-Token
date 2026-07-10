@@ -1,0 +1,38 @@
+{
+  "name": "dependency-integrity-monitor",
+  "version": "1.0.0",
+  "description": "Decentralized Dependency Integrity Monitor — verify local package hashes against an on-chain ledger",
+  "main": "dist/cli.js",
+  "bin": {
+    "dep-integrity": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "compile": "hardhat compile",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "test": "hardhat test",
+    "cli": "ts-node src/cli.ts",
+    "verify": "ts-node src/cli.ts verify",
+    "register": "ts-node src/cli.ts register"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.4"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@types/chai": "^4.3.19",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^20.16.11",
+    "chai": "^4.5.0",
+    "hardhat": "^2.22.15",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
+
