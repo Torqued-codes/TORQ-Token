@@ -36,7 +36,7 @@ export default function SendTokens({ balance, onSent }: SendTokensProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-700/50 bg-slate-900/50 p-6 text-center">
+    <div className="glass-card rounded-2xl p-6 text-center">
       <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-3xl mb-4 shadow-lg shadow-emerald-900/30">
         ➤
       </div>
@@ -50,7 +50,7 @@ export default function SendTokens({ balance, onSent }: SendTokensProps) {
             value={to}
             onChange={(e) => setTo(e.target.value)}
             placeholder="0x1234567890abcdef..."
-            className="w-full rounded-lg bg-slate-800/70 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg bg-charcoal-900/70 border border-charcoal-600 px-4 py-3 text-white placeholder-slate-500 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
 
@@ -63,7 +63,7 @@ export default function SendTokens({ balance, onSent }: SendTokensProps) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="w-full rounded-lg bg-slate-800/70 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full rounded-lg bg-charcoal-900/70 border border-charcoal-600 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
           <p className="text-xs text-slate-500 mt-1">Available: {available.toFixed(4)} TQ</p>
         </div>

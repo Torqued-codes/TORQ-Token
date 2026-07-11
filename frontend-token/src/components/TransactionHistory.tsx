@@ -25,7 +25,7 @@ export default function TransactionHistory() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-slate-700/50 bg-slate-900/50 p-6">
+    <div className="glass-card rounded-2xl p-6">
       <div className="text-center mb-6">
         <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl mb-3">
           🕐
@@ -44,7 +44,7 @@ export default function TransactionHistory() {
         {entries.map((entry) => {
           const style = TYPE_STYLES[entry.type];
           return (
-            <div key={entry.txHash} className="rounded-xl bg-slate-800/50 border border-slate-700/50 p-4">
+            <div key={entry.txHash} className="rounded-xl bg-charcoal-800/50 border border-charcoal-600/50 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-9 h-9 shrink-0 rounded-full bg-slate-700/60 flex items-center justify-center text-sm">
@@ -81,3 +81,9 @@ export default function TransactionHistory() {
     </div>
   );
 }
+
+
+
+
+
+
