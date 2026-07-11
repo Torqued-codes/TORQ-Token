@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import TokenBackground from '../components/TokenBackground';
 
 export default function Login() {
   const { signIn, signUp } = useAuth();
@@ -28,8 +29,8 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center safe-x safe-top safe-bottom px-4 overflow-hidden bg-charcoal-950">
-      <div className="bg-token-drift animate-drift-rotate" />
-      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-950/40 via-transparent to-charcoal-950 pointer-events-none" />
+      <TokenBackground />
+      <div className="absolute inset-0 bg-charcoal-950/50 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm text-center mb-8">
         <div className="mx-auto w-20 h-20 token-logo mb-5" />
@@ -84,3 +85,5 @@ export default function Login() {
     </div>
   );
 }
+
+
