@@ -40,7 +40,7 @@ export default function SendTokens({ balance, onSent }: SendTokensProps) {
       <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-3xl mb-4 shadow-lg shadow-emerald-900/30">
         ➤
       </div>
-      <h2 className="text-2xl font-bold text-emerald-400">Send Torq Tokens</h2>
+      <h2 className="text-2xl font-bold text-emerald-400">Send TORQ Tokens</h2>
       <p className="text-slate-400 text-sm mt-1 mb-6">Transfer TQ tokens to another wallet address</p>
 
       <form onSubmit={handleSend} className="text-left space-y-4">

@@ -28,9 +28,9 @@ export default function Login() {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center safe-x safe-top safe-bottom px-4 overflow-hidden bg-charcoal-950">
+    <div className="relative min-h-screen flex flex-col items-center justify-center safe-x safe-top safe-bottom px-4 overflow-hidden">
       <TokenBackground />
-      <div className="absolute inset-0 bg-charcoal-950/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-charcoal-950/20 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm text-center mb-8">
         <div className="mx-auto w-20 h-20 token-logo mb-5" />

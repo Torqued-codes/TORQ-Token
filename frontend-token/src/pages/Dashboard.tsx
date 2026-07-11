@@ -36,9 +36,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-charcoal-950 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col overflow-hidden">
       <TokenBackground />
-      <div className="absolute inset-0 bg-charcoal-950/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-charcoal-950/20 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col flex-1">
         <Header address={address} balance={balance} />

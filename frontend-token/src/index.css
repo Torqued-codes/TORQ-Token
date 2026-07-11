@@ -1,26 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 :root {
   color-scheme: dark;
 }
- 
+
 html, body, #root {
   height: 100%;
 }
- 
+
 body {
   margin: 0;
   background:
-    radial-gradient(ellipse 70% 50% at 15% -10%, rgba(88, 28, 135, 0.35), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 85% 110%, rgba(126, 34, 206, 0.3), transparent 60%),
-    radial-gradient(ellipse at center, #15101f 0%, #0a0810 70%);
+    radial-gradient(ellipse 95% 70% at 12% -5%, rgba(26, 1, 49, 0.55), transparent 68%),
+    radial-gradient(ellipse 95% 70% at 88% 105%, rgba(68, 2, 126, 0.5), transparent 68%),
+    linear-gradient(160deg, #180d26 0%, #0f081b 50%, #180b22 100%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   color: #e4e4e7;
 }
- 
+
 .safe-top { padding-top: max(env(safe-area-inset-top), 0.75rem); }
 .safe-bottom { padding-bottom: max(env(safe-area-inset-bottom), 0.75rem); }
 .safe-left { padding-left: max(env(safe-area-inset-left), 1rem); }
@@ -29,14 +29,14 @@ body {
   padding-left: max(env(safe-area-inset-left), 1rem);
   padding-right: max(env(safe-area-inset-right), 1rem);
 }
- 
+
 .truncate-hash {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
 }
- 
+
 /* Glassmorphism card - used across balance card, mine/send/history panels */
 .glass-card {
   background: linear-gradient(145deg, rgba(38, 38, 45, 0.55), rgba(18, 18, 21, 0.65));
@@ -47,7 +47,7 @@ body {
     0 8px 32px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
- 
+
 /* Individual scattered coin, sized/positioned/blurred per-instance by
    TokenBackground.tsx. Source PNG is now transparent, so no clipping
    needed - contain preserves the coin's true shape + soft drop-shadow. */
@@ -58,12 +58,12 @@ body {
   background-position: center;
   filter: brightness(1) saturate(1.15) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
 }
- 
+
 .sparkle {
   color: rgba(230, 220, 255, 0.9);
   text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
 }
- 
+
 /* Brushed-metal button: diagonal silver gradient + glossy inset lighting
    + a light sweep that slides across, like polished aluminum. */
 .btn-metallic {
@@ -95,16 +95,16 @@ body {
   0% { left: -75%; }
   55%, 100% { left: 125%; }
 }
- 
+
 /* Crisp mini token used as the header logo */
 .token-logo {
   background-image: url('/tq-token.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  filter: drop-shadow(0 2px 6px rgba(147, 51, 234, 0.4));
+  filter: drop-shadow(0 2px 6px rgba(173, 93, 248, 0.4));
 }
- 
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb {
   background: rgba(168, 170, 179, 0.25);

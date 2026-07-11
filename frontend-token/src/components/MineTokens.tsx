@@ -42,7 +42,7 @@ export default function MineTokens({ cooldownRemaining, onMined }: MineTokensPro
     <div className="glass-card rounded-2xl p-6 text-center">
       <div className="mx-auto w-20 h-20 token-logo mb-4" />
       <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-        Mine Torq Tokens
+        Mine TORQ Tokens
       </h2>
       <p className="text-slate-400 text-sm mt-1 mb-6">
         Earn TQ tokens by contributing computing power to the network
