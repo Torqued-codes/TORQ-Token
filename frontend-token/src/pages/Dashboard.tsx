@@ -6,6 +6,7 @@ import TransactionHistory from '../components/TransactionHistory';
 import { getWallet } from '../lib/api';
 
 type Tab = 'mine' | 'send' | 'history';
+
 export default function Dashboard() {
   const [tab, setTab] = useState<Tab>('mine');
   const [address, setAddress] = useState<string | null>(null);
@@ -19,6 +20,7 @@ export default function Dashboard() {
       setBalance(w.balance);
       setCooldown(w.cooldownRemaining);
     } catch {
+      // wallet may still be initializing right after signup - harmless
     }
   }
 
@@ -33,37 +35,45 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header address={address} balance={balance} />
+    <div className="relative min-h-screen flex flex-col bg-charcoal-950 overflow-hidden">
+      <div className="bg-token-drift animate-drift-rotate opacity-25" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-charcoal-950/60 to-charcoal-950 pointer-events-none" />
 
-      <main className="flex-1 safe-x safe-bottom max-w-2xl w-full mx-auto py-6 space-y-6">
-        <div className="text-center rounded-2xl border border-slate-700/50 bg-slate-900/50 p-6">
-          <p className="text-slate-400 text-sm">Total Balance</p>
-          <p className="text-4xl font-bold text-purple-300 mt-1">
-            {balance ? Number(balance).toFixed(4) : '0.0000'} TQ
-          </p>
-          <p className="text-xs text-slate-500 mt-2 truncate-hash">Wallet: {address || '...'}</p>
-        </div>
+      <div className="relative z-10 flex flex-col flex-1">
+        <Header address={address} balance={balance} />
 
-        <div className="flex rounded-xl bg-slate-900/60 border border-slate-700/50 p-1 gap-1">
-          {tabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-                tab === t.key
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        {tab === 'mine' && <MineTokens cooldownRemaining={cooldown} onMined={setBalance} />}
-        {tab === 'send' && <SendTokens balance={balance} onSent={setBalance} />}
-        {tab === 'history' && <TransactionHistory />}
-      </main>
+        <main className="flex-1 safe-x safe-bottom max-w-2xl w-full mx-auto py-6 space-y-6">
+          <div className="text-center glass-card rounded-2xl p-6">
+            <p className="text-metal-400 text-sm tracking-wide uppercase">Total Balance</p>
+            <p className="text-4xl font-bold text-metal-300 mt-1">
+              {balance ? Number(balance).toFixed(4) : '0.0000'} TQ
+            </p>
+            <p className="text-xs text-metal-400/70 mt-2 truncate-hash">Wallet: {address || '...'}</p>
+          </div>
+
+          <div className="flex rounded-xl glass-card p-1 gap-1">
+            {tabs.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
+                  tab === t.key
+                    ? 'bg-gradient-to-r from-accent-600 to-accent-400 text-white shadow-md shadow-accent-600/20'
+                    : 'text-metal-400 hover:text-white'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {tab === 'mine' && <MineTokens cooldownRemaining={cooldown} onMined={setBalance} />}
+          {tab === 'send' && <SendTokens balance={balance} onSent={setBalance} />}
+          {tab === 'history' && <TransactionHistory />}
+        </main>
+      </div>
     </div>
   );
 }
+
+

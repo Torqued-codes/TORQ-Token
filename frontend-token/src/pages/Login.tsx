@@ -27,17 +27,20 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center safe-x safe-top safe-bottom px-4">
-      <div className="w-full max-w-sm text-center mb-8">
-        <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl mb-4 shadow-lg shadow-purple-900/40">
-          🪙
-        </div>
-        <h1 className="text-4xl font-bold text-purple-300">Torq</h1>
-        <p className="text-slate-400 mt-2">Your Premium Digital Currency Platform</p>
+    <div className="relative min-h-screen flex flex-col items-center justify-center safe-x safe-top safe-bottom px-4 overflow-hidden bg-charcoal-950">
+      <div className="bg-token-drift animate-drift-rotate" />
+      <div className="absolute inset-0 bg-gradient-to-b from-charcoal-950/40 via-transparent to-charcoal-950 pointer-events-none" />
+
+      <div className="relative z-10 w-full max-w-sm text-center mb-8">
+        <div className="mx-auto w-20 h-20 token-logo mb-5" />
+        <h1 className="text-4xl font-bold tracking-tight text-metal-300">Torq</h1>
+        <p className="text-sm text-metal-400 mt-2 tracking-wide uppercase">
+          Premium Digital Currency Platform
+        </p>
       </div>
 
-      <div className="w-full max-w-sm bg-slate-900/60 backdrop-blur border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
-        <h2 className="text-xl font-semibold text-white mb-4">
+      <div className="relative z-10 w-full max-w-sm glass-card rounded-2xl p-6">
+        <h2 className="text-xl font-semibold text-white mb-5">
           {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
         </h2>
 
@@ -48,7 +51,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full rounded-lg bg-slate-800/70 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full rounded-lg bg-charcoal-900/70 border border-charcoal-600 px-4 py-3 text-white placeholder-metal-400/60 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition"
           />
           <input
             type="password"
@@ -57,7 +60,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full rounded-lg bg-slate-800/70 border border-slate-700 px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full rounded-lg bg-charcoal-900/70 border border-charcoal-600 px-4 py-3 text-white placeholder-metal-400/60 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition"
           />
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -65,7 +68,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 py-3 font-semibold text-white disabled:opacity-50 hover:opacity-90 transition"
+            className="w-full rounded-lg bg-gradient-to-r from-accent-600 to-accent-400 py-3 font-semibold text-white disabled:opacity-50 hover:brightness-110 transition shadow-lg shadow-accent-600/20"
           >
             {busy ? 'Please wait...' : mode === 'signin' ? 'Sign In →' : 'Sign Up →'}
           </button>
@@ -73,7 +76,7 @@ export default function Login() {
 
         <button
           onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-          className="w-full text-center text-sm text-slate-400 hover:text-purple-300 mt-4"
+          className="w-full text-center text-sm text-metal-400 hover:text-accent-400 mt-4 transition"
         >
           {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
         </button>
