@@ -1,55 +1,68 @@
 import { Router, Response } from "express";
 import { AuthedRequest, requireAuth } from "../middleware/auth";
 import { supabaseAdmin } from "../supabaseAdmin";
-import { createCustodialWallet, getBalance, getCooldownRemaining } from "../blockchain";
-
+import { createCustodialWallet, fundNewWallet, getBalance, getCooldownRemaining } from "../blockchain";
+ 
 const router = Router();
-
+ 
+/** Creates a custodial wallet for the user if they don't have one yet. Idempotent. */
 router.post("/init", requireAuth, async (req: AuthedRequest, res: Response) => {
   const userId = req.userId!;
-
+ 
   const { data: existing } = await supabaseAdmin
     .from("wallets")
     .select("address")
     .eq("user_id", userId)
     .maybeSingle();
-
+ 
   if (existing) {
     return res.json({ address: existing.address, created: false });
   }
-
+ 
   const { address, encryptedPrivateKey } = createCustodialWallet();
-
+ 
   const { error } = await supabaseAdmin.from("wallets").insert({
     user_id: userId,
     address,
     encrypted_private_key: encryptedPrivateKey,
   });
-
+ 
   if (error) {
     return res.status(500).json({ error: `Failed to create wallet: ${error.message}` });
   }
-
+ 
+  try {
+    await fundNewWallet(address);
+  } catch (err: any) {
+    // Wallet row exists but has 0 ETH - mining/sending will fail until funded.
+    // Surface this clearly rather than pretending everything succeeded.
+    return res.status(500).json({
+      error: `Wallet created but funding failed: ${err.message}. Fix FUNDER_PRIVATE_KEY and retry.`,
+    });
+  }
+ 
   res.json({ address, created: true });
 });
+ 
+/** Returns the user's address, live on-chain balance, and mining cooldown. */
 router.get("/", requireAuth, async (req: AuthedRequest, res: Response) => {
   const userId = req.userId!;
-
+ 
   const { data: wallet, error } = await supabaseAdmin
     .from("wallets")
     .select("address")
     .eq("user_id", userId)
     .maybeSingle();
-
+ 
   if (error) return res.status(500).json({ error: error.message });
   if (!wallet) return res.status(404).json({ error: "No wallet yet — call POST /api/wallet/init" });
-
+ 
   const [balance, cooldownRemaining] = await Promise.all([
     getBalance(wallet.address),
     getCooldownRemaining(wallet.address),
   ]);
-
+ 
   res.json({ address: wallet.address, balance, cooldownRemaining });
 });
-
+ 
 export default router;

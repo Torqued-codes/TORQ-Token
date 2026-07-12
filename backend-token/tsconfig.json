@@ -13,6 +13,6 @@
     "declaration": false,
     "sourceMap": true
   },
-  "include": ["server/src/**/*.ts", "scripts/**/*.ts", "test/**/*.ts", "hardhat.config.ts"],
+  "include": ["server/src/**/*.ts", "server/scripts/**/*.ts", "test/**/*.ts", "hardhat.config.ts"],
   "exclude": ["node_modules", "dist", "cache", "artifacts"]
 }
