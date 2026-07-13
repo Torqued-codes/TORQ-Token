@@ -116,61 +116,79 @@ export interface HistoryEntry {
   txHash: string;
   timestamp: number;
 }
- 
-/** Reads Mined + Transfer events involving this address directly from chain logs. */
+
+/** Reads Mined + Transfer events involving this address directly from chain logs.
+ *  Chunked into small block ranges because public RPC providers (like Amoy's
+ *  free endpoint) reject eth_getLogs queries spanning too many blocks at once -
+ *  unlike Hardhat's local node, which had no such limit. */
 export async function getTransactionHistory(address: string): Promise<HistoryEntry[]> {
   const contract = getContract(provider);
   const currentBlock = await provider.getBlockNumber();
-  const fromBlock = Math.max(0, currentBlock - 50000); // adjust range for your chain
- 
-  const [minedEvents, sentEvents, receivedEvents] = await Promise.all([
-    contract.queryFilter(contract.filters.Mined(address), fromBlock, currentBlock),
-    contract.queryFilter(contract.filters.Transfer(address, null), fromBlock, currentBlock),
-    contract.queryFilter(contract.filters.Transfer(null, address), fromBlock, currentBlock),
-  ]);
- 
+
+  const CHUNK_SIZE = 2000; // safely under most public RPC limits
+  const MAX_CHUNKS = 10; // total lookback = CHUNK_SIZE * MAX_CHUNKS blocks
   const entries: HistoryEntry[] = [];
- 
-  for (const ev of minedEvents) {
-    const args = (ev as any).args;
-    const block = await ev.getBlock();
-    entries.push({
-      type: "mined",
-      amount: ethers.formatUnits(args.amount, 18),
-      counterparty: null,
-      txHash: ev.transactionHash,
-      timestamp: block.timestamp,
-    });
-  }
-  for (const ev of sentEvents) {
-    const args = (ev as any).args;
-    if (args.from.toLowerCase() === address.toLowerCase() && args.from !== ethers.ZeroAddress) {
-      const block = await ev.getBlock();
-      entries.push({
-        type: "sent",
-        amount: ethers.formatUnits(args.value, 18),
-        counterparty: args.to,
-        txHash: ev.transactionHash,
-        timestamp: block.timestamp,
-      });
+
+  for (let i = 0; i < MAX_CHUNKS; i++) {
+    const toBlock = currentBlock - i * CHUNK_SIZE;
+    const fromBlock = Math.max(0, toBlock - CHUNK_SIZE + 1);
+    if (toBlock < 0) break;
+
+    try {
+      const [minedEvents, sentEvents, receivedEvents] = await Promise.all([
+        contract.queryFilter(contract.filters.Mined(address), fromBlock, toBlock),
+        contract.queryFilter(contract.filters.Transfer(address, null), fromBlock, toBlock),
+        contract.queryFilter(contract.filters.Transfer(null, address), fromBlock, toBlock),
+      ]);
+
+      for (const ev of minedEvents) {
+        const args = (ev as any).args;
+        const block = await ev.getBlock();
+        entries.push({
+          type: "mined",
+          amount: ethers.formatUnits(args.amount, 18),
+          counterparty: null,
+          txHash: ev.transactionHash,
+          timestamp: block.timestamp,
+        });
+      }
+      for (const ev of sentEvents) {
+        const args = (ev as any).args;
+        if (args.from.toLowerCase() === address.toLowerCase() && args.from !== ethers.ZeroAddress) {
+          const block = await ev.getBlock();
+          entries.push({
+            type: "sent",
+            amount: ethers.formatUnits(args.value, 18),
+            counterparty: args.to,
+            txHash: ev.transactionHash,
+            timestamp: block.timestamp,
+          });
+        }
+      }
+      for (const ev of receivedEvents) {
+        const args = (ev as any).args;
+        if (args.to.toLowerCase() === address.toLowerCase() && args.from !== ethers.ZeroAddress) {
+          const block = await ev.getBlock();
+          entries.push({
+            type: "received",
+            amount: ethers.formatUnits(args.value, 18),
+            counterparty: args.from,
+            txHash: ev.transactionHash,
+            timestamp: block.timestamp,
+          });
+        }
+      }
+    } catch (err: any) {
+      console.error(`History chunk ${fromBlock}-${toBlock} failed:`, err.message);
+      break;
     }
+
+    if (fromBlock === 0) break;
   }
-  for (const ev of receivedEvents) {
-    const args = (ev as any).args;
-    if (args.to.toLowerCase() === address.toLowerCase() && args.from !== ethers.ZeroAddress) {
-      const block = await ev.getBlock();
-      entries.push({
-        type: "received",
-        amount: ethers.formatUnits(args.value, 18),
-        counterparty: args.from,
-        txHash: ev.transactionHash,
-        timestamp: block.timestamp,
-      });
-    }
-  }
- 
+
   return entries.sort((a, b) => b.timestamp - a.timestamp);
 }
+  
  
 /* --------------------------------------------------------------------- */
 /* Writes (signed by the user's own decrypted key, held only in memory)  */

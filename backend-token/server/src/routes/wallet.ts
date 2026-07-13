@@ -36,6 +36,7 @@ router.post("/init", requireAuth, async (req: AuthedRequest, res: Response) => {
   } catch (err: any) {
     // Wallet row exists but has 0 ETH - mining/sending will fail until funded.
     // Surface this clearly rather than pretending everything succeeded.
+    console.error(`Funding failed for new wallet ${address}:`, err);
     return res.status(500).json({
       error: `Wallet created but funding failed: ${err.message}. Fix FUNDER_PRIVATE_KEY and retry.`,
     });
